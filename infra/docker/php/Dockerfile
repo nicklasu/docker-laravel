@@ -32,8 +32,12 @@ RUN apt-get update \
     zip \
     bcmath \
   && composer config -g process-timeout 3600 \
-  && composer config -g repos.packagist composer https://packagist.org
-
+  && composer config -g repos.packagist composer https://packagist.org \
+  && apt-get update -yq \
+    && curl -L https://deb.nodesource.com/setup_18.x | bash \
+    && apt-get update -yq \
+    && apt-get install -yq \
+        nodejs
 FROM base AS development
 
 COPY ./infra/docker/php/php.development.ini /usr/local/etc/php/php.ini
@@ -54,3 +58,10 @@ RUN composer install -q -n --no-ansi --no-dev --no-scripts --no-progress --prefe
   && chmod -R 777 storage bootstrap/cache \
   && php artisan optimize:clear \
   && php artisan optimize
+
+#RUN composer require laravel/ui --dev 
+#RUN php artisan ui react --auth 
+#RUN curl -sL https://deb.nodesource.com/setup_18.x | bash \
+#&& apt-get install -y nodejs
+# RUN npm install --legacy-peer-deps
+
